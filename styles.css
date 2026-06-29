@@ -585,13 +585,13 @@ pre code .pre-highlight {
   width: 360px;
   overflow-y: auto;
   scrollbar-gutter: stable;
-  border-left: 1px solid #cfc6a6;
-  background: #fbfaf5;
+  border-left: 1px solid #dadce0;
+  background: #f8fafd;
   color: var(--foreground);
   z-index: 20;
   font-family: var(--font-dm-sans);
   line-height: 1.45;
-  box-shadow: -10px 0 24px rgba(0, 0, 0, 0.05);
+  box-shadow: -8px 0 20px rgba(60, 64, 67, 0.08);
 }
 
 .community-sidebar__inner {
@@ -604,30 +604,29 @@ pre code .pre-highlight {
   top: 0;
   z-index: 1;
   margin-bottom: 0;
-  border-bottom: 1px solid #d8cfac;
-  background: rgba(251, 250, 245, 0.97);
+  border-bottom: 1px solid #dadce0;
+  background: rgba(255, 255, 255, 0.96);
   padding: 0.85rem 1rem 0.75rem;
   backdrop-filter: blur(8px);
 }
 
 .community-sidebar__eyebrow {
   margin-bottom: 0.45rem;
-  font-family: "DM Mono", monospace;
-  font-size: 0.78rem;
-  font-weight: 500;
-  text-transform: uppercase;
-  color: #4f4726;
+  font-family: var(--font-dm-sans);
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #202124;
   letter-spacing: 0;
 }
 
 .community-sidebar__action {
   display: inline-block;
   margin-bottom: 0;
-  border: 1px solid #111111;
+  border: 1px solid #dadce0;
   border-radius: 999px;
   padding: 0.25rem 0.5rem;
-  background: var(--foreground);
-  color: #ffffff;
+  background: #ffffff;
+  color: #1a73e8;
   font-size: 0.72rem;
   font-weight: 700;
   text-decoration: none;
@@ -635,12 +634,13 @@ pre code .pre-highlight {
 }
 
 .community-sidebar__action:hover {
-  opacity: 0.9;
+  background: #f1f6ff;
+  opacity: 1;
 }
 
 .community-comment-list {
   display: grid;
-  gap: 0.75rem;
+  gap: 0.7rem;
   padding: 1rem;
 }
 
@@ -651,54 +651,89 @@ pre code .pre-highlight {
 }
 
 .community-comment {
-  border: 1px solid #d8cfac;
-  border-radius: 6px;
+  border: 1px solid #dadce0;
+  border-radius: 8px;
   background: #ffffff;
-  padding: 0.85rem 0.9rem;
-  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.04);
+  padding: 0.8rem 0.85rem;
+  box-shadow: 0 1px 2px rgba(60, 64, 67, 0.12);
+  cursor: pointer;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.community-comment:hover,
+.community-comment:focus {
+  border-color: #a8c7fa;
+  box-shadow: 0 2px 6px rgba(60, 64, 67, 0.18);
+  outline: none;
+}
+
+.community-comment.is-active {
+  border-color: #1a73e8;
+  box-shadow: 0 0 0 2px #d2e3fc, 0 2px 6px rgba(60, 64, 67, 0.16);
+}
+
+.community-comment__header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.55rem;
+}
+
+.community-comment__avatar {
+  display: inline-grid;
+  width: 1.55rem;
+  height: 1.55rem;
+  border-radius: 50%;
+  place-items: center;
+  background: #1a73e8;
+  color: #ffffff;
+  font-family: var(--font-dm-sans);
+  font-size: 0.78rem;
+  font-weight: 700;
 }
 
 .community-comment__author {
   display: inline-block;
-  margin-bottom: 0.55rem;
-  color: #6f6a5a;
-  font-family: "DM Mono", monospace;
-  font-size: 0.78rem;
-  font-weight: 500;
+  border-bottom: 0;
+  color: #202124;
+  font-family: var(--font-dm-sans);
+  font-size: 0.83rem;
+  font-weight: 700;
 }
 
 .community-comment__body p {
-  margin-bottom: 0.7rem;
-  font-size: 0.9rem;
+  margin-bottom: 0.68rem;
+  color: #3c4043;
+  font-family: var(--font-dm-sans);
+  font-size: 0.86rem;
+  line-height: 1.5;
 }
 
 .community-comment__body p:last-child {
   margin-bottom: 0;
 }
 
-.community-comment__links {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.45rem;
-  margin-top: 0.75rem;
-  font-size: 0.78rem;
-  font-weight: 700;
+.community-comment__inline-link {
+  border-bottom: 0;
+  border-radius: 3px;
+  background: #e8f0fe;
+  color: #174ea6;
+  padding: 0 0.14rem;
+  text-decoration: none;
 }
 
-.community-comment__links a {
-  border: 1px solid #d8cfac;
-  border-radius: 999px;
-  padding: 0.12rem 0.45rem;
-  background: #fbfaf5;
+.community-comment__inline-link:hover {
+  background: #d2e3fc;
 }
 
 .comment-marker {
   display: inline-block;
   min-height: 1.45rem;
-  border: 1px solid var(--border);
-  padding: 0.1rem 0.38rem;
-  background: #fff4bd;
-  color: var(--foreground);
+  border: 1px solid #1a73e8;
+  border-radius: 999px;
+  padding: 0.1rem 0.42rem;
+  background: #ffffff;
+  color: #1a73e8;
   cursor: pointer;
   font-family: var(--font-dm-sans);
   font-size: 0.72rem;
@@ -709,7 +744,15 @@ pre code .pre-highlight {
 
 .comment-marker:hover,
 .comment-marker.is-active {
-  background: #f5df82;
+  background: #e8f0fe;
+}
+
+.community-section-highlight {
+  border-radius: 8px;
+  background: rgba(232, 240, 254, 0.72);
+  box-shadow: 0 0 0 6px rgba(232, 240, 254, 0.72);
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+  scroll-margin-top: 1.5rem;
 }
 
 @media (max-width: 1180px) {

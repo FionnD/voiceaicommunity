@@ -31,6 +31,133 @@
     return count === 1 ? "1 note" : `${count} notes`;
   }
 
+  function escapeRegExp(value) {
+    return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  }
+
+  function rangesOverlap(a, b) {
+    return a.start < b.end && b.start < a.end;
+  }
+
+  function addRange(ranges, nextRange) {
+    if (ranges.some((range) => rangesOverlap(range, nextRange))) {
+      return;
+    }
+
+    ranges.push(nextRange);
+  }
+
+  function collectInlineLinks(text, links) {
+    const ranges = [];
+    const urlPattern = /https?:\/\/[^\s<>"']+/g;
+    let match;
+
+    while ((match = urlPattern.exec(text)) !== null) {
+      let displayText = match[0];
+      while (/[.,;:!?)]$/.test(displayText)) {
+        displayText = displayText.slice(0, -1);
+      }
+
+      if (!displayText) {
+        continue;
+      }
+
+      addRange(ranges, {
+        start: match.index,
+        end: match.index + displayText.length,
+        href: displayText
+      });
+    }
+
+    (links || []).forEach((link) => {
+      if (!link.label || !link.url || text.includes(link.url)) {
+        return;
+      }
+
+      const labelPattern = new RegExp(escapeRegExp(link.label), "gi");
+      let labelMatch;
+      while ((labelMatch = labelPattern.exec(text)) !== null) {
+        addRange(ranges, {
+          start: labelMatch.index,
+          end: labelMatch.index + labelMatch[0].length,
+          href: link.url
+        });
+      }
+    });
+
+    return ranges.sort((a, b) => a.start - b.start);
+  }
+
+  function appendLinkedText(parent, text, links) {
+    let cursor = 0;
+
+    collectInlineLinks(text, links).forEach((range) => {
+      if (range.start > cursor) {
+        parent.append(document.createTextNode(text.slice(cursor, range.start)));
+      }
+
+      const anchor = createElement("a", "community-comment__inline-link", text.slice(range.start, range.end));
+      anchor.href = range.href;
+      anchor.target = "_blank";
+      anchor.rel = "noopener noreferrer";
+      parent.append(anchor);
+      cursor = range.end;
+    });
+
+    if (cursor < text.length) {
+      parent.append(document.createTextNode(text.slice(cursor)));
+    }
+  }
+
+  function findHighlightTarget(sectionId) {
+    const heading = document.getElementById(sectionId);
+    if (!heading) {
+      return null;
+    }
+
+    return heading.closest(".chunk-content") || heading;
+  }
+
+  function setActiveCommentCard(sectionId) {
+    document.querySelectorAll(".community-comment").forEach((card) => {
+      card.classList.toggle("is-active", card.dataset.section === sectionId);
+    });
+
+    document.querySelectorAll(".comment-marker").forEach((marker) => {
+      marker.classList.toggle("is-active", marker.dataset.section === sectionId);
+    });
+  }
+
+  function highlightArticleSection(sectionId, shouldScroll) {
+    document.querySelectorAll(".community-section-highlight").forEach((element) => {
+      element.classList.remove("community-section-highlight");
+    });
+
+    const heading = document.getElementById(sectionId);
+    const target = findHighlightTarget(sectionId);
+    if (!heading || !target) {
+      return;
+    }
+
+    target.classList.add("community-section-highlight");
+
+    if (shouldScroll) {
+      heading.scrollIntoView({ block: "center", behavior: "smooth" });
+    }
+  }
+
+  function activateSection(sectionId, options) {
+    const shouldScroll = Boolean(options && options.scroll);
+
+    state.activeSection = sectionId;
+    setActiveCommentCard(sectionId);
+    highlightArticleSection(sectionId, shouldScroll);
+
+    if (window.history && sectionId) {
+      window.history.pushState(null, "", `#${sectionId}`);
+    }
+  }
+
   function groupComments(comments) {
     const grouped = new Map();
 
@@ -244,30 +371,41 @@
   function renderCommentCard(comment) {
     const article = createElement("article", "community-comment");
     article.dataset.section = comment.section;
+    article.tabIndex = 0;
+    article.setAttribute("role", "button");
+    article.setAttribute("aria-label", `Go to section ${comment.sectionNumber} ${comment.sectionTitle}`);
 
+    const header = createElement("div", "community-comment__header");
+    const avatar = createElement("span", "community-comment__avatar", comment.author.slice(0, 1).toUpperCase());
     const author = createElement("a", "community-comment__author", `@${comment.author}`);
     author.href = comment.authorUrl || "#";
     author.target = "_blank";
     author.rel = "noopener noreferrer";
+    header.append(avatar, author);
 
     const body = createElement("div", "community-comment__body");
     (comment.body || []).forEach((paragraph) => {
-      body.append(createElement("p", "", paragraph));
+      const paragraphElement = createElement("p");
+      appendLinkedText(paragraphElement, paragraph, comment.links || []);
+      body.append(paragraphElement);
     });
 
-    const footer = createElement("div", "community-comment__links");
-    (comment.links || []).forEach((link) => {
-      const item = createElement("a", "", link.label);
-      item.href = link.url;
-      item.target = "_blank";
-      item.rel = "noopener noreferrer";
-      footer.append(item);
-    });
+    article.append(header, body);
+    article.addEventListener("click", (event) => {
+      if (event.target.closest("a")) {
+        return;
+      }
 
-    article.append(author, body);
-    if (footer.childElementCount) {
-      article.append(footer);
-    }
+      activateSection(comment.section, { scroll: true });
+    });
+    article.addEventListener("keydown", (event) => {
+      if (event.key !== "Enter" && event.key !== " ") {
+        return;
+      }
+
+      event.preventDefault();
+      activateSection(comment.section, { scroll: true });
+    });
 
     return article;
   }
@@ -277,22 +415,15 @@
       return;
     }
 
-    const visibleComments =
-      state.activeSection === "all"
-        ? state.comments
-        : state.commentsBySection.get(state.activeSection) || [];
-
     clearElement(state.list);
-    visibleComments.forEach((comment) => state.list.append(renderCommentCard(comment)));
-
-    document.querySelectorAll(".comment-marker").forEach((marker) => {
-      marker.classList.toggle("is-active", marker.dataset.section === state.activeSection);
-    });
+    state.comments.forEach((comment) => state.list.append(renderCommentCard(comment)));
+    setActiveCommentCard(state.activeSection);
   }
 
   function setFilter(section, shouldFocusSidebar) {
     state.activeSection = section;
     renderComments();
+    highlightArticleSection(section, false);
 
     if (shouldFocusSidebar && state.sidebar && window.matchMedia("(max-width: 1180px)").matches) {
       state.sidebar.scrollIntoView({ block: "start", behavior: "smooth" });
@@ -315,7 +446,7 @@
         "aria-label",
         `${countLabel(comments.length)} for ${comments[0].sectionNumber} ${comments[0].sectionTitle}`
       );
-      marker.addEventListener("click", () => setFilter(sectionId, true));
+      marker.addEventListener("click", () => activateSection(sectionId, { scroll: false }));
 
       heading.classList.add("has-community-comments");
       heading.append(" ", marker);
@@ -325,7 +456,7 @@
   function syncFromHash() {
     const sectionId = window.location.hash.replace("#", "");
     if (sectionId && state.commentsBySection.has(sectionId)) {
-      setFilter(sectionId, false);
+      activateSection(sectionId, { scroll: false });
     }
   }
 

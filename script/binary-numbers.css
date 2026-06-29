@@ -1,0 +1,36 @@
+/* Binary paragraph numbers */
+.binary-paragraph-number {
+  font-family: monospace;
+  font-size: 0.8rem;
+  color: var(--muted);
+  opacity: 0.3;
+  text-align: right;
+  letter-spacing: 1px;
+  white-space: nowrap;
+  padding-right: 15px; /* Space between binary text and content */
+  width: 60px; /* Fixed width for alignment */
+}
+
+.binary-container {
+  position: absolute;
+  left: -120px; /* Position outside the content area */
+  width: auto; /* Allow natural width */
+  text-align: right; /* Align text to the right */
+  pointer-events: none;
+  z-index: 5;
+  transition: opacity 0.2s ease; /* Add smooth transition */
+}
+
+/* Adjust positioning for smaller screens but not mobile */
+@media (max-width: 1200px) and (min-width: 769px) {
+  .binary-container {
+    left: -60px; /* Slightly closer on smaller screens */
+  }
+}
+
+/* Media query for mobile */
+@media (max-width: 768px) {
+  .binary-container {
+    display: none; /* Hide binary numbers on mobile */
+  }
+}

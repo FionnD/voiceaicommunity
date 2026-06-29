@@ -1,0 +1,42 @@
+name: Community comment
+description: Add a public sidebar comment to the Voice AI primer community edition.
+title: "[comment]: "
+labels:
+  - community-comment
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for adding a comment. Use the section anchor from the page URL, for example `latency`, `telephony`, or `rag-memory`.
+  - type: input
+    id: section-anchor
+    attributes:
+      label: Section anchor
+      description: The page anchor this comment should attach to.
+      placeholder: latency
+    validations:
+      required: true
+  - type: input
+    id: comment-title
+    attributes:
+      label: Comment title
+      description: A short title for the sidebar card.
+      placeholder: Measure the gap users feel
+    validations:
+      required: true
+  - type: textarea
+    id: comment
+    attributes:
+      label: Comment
+      description: The public comment body. Keep it specific and useful.
+      placeholder: Add the comment text here.
+    validations:
+      required: true
+  - type: textarea
+    id: links
+    attributes:
+      label: Links
+      description: Optional supporting links, one per line. Markdown links and bare URLs both work.
+      placeholder: "[Example](https://example.com)"
+    validations:
+      required: false

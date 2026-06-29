@@ -1,0 +1,157 @@
+# Node.js dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# Package manager lock files (optional - uncomment if you want to ignore them)
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+*.lcov
+
+# nyc test coverage
+.nyc_output
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Optional REPL history
+.node_repl_history
+
+# Output of 'npm pack'
+*.tgz
+
+# Yarn Integrity file
+.yarn-integrity
+
+# dotenv environment variables file
+.env
+.env.test
+.env.local
+.env.production
+
+# parcel-bundler cache (https://parceljs.org/)
+.cache
+.parcel-cache
+
+# Next.js build output
+.next
+
+# Nuxt.js build / generate output
+.nuxt
+dist
+
+# Gatsby files
+.cache/
+
+# Temporary folders
+tmp/
+temp/
+
+# Editor directories and files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# ==============================================
+# TRANSLATION PROJECT SPECIFIC
+# ==============================================
+
+# Generated translated HTML files (uncomment to ignore generated files)
+# /ja/
+# /es/
+# /fr/
+# Keep only the original index.html and translations/ directory in git
+
+# Translation backup files
+translations/*.backup
+translations/*~
+translations/.#*
+
+# Debug and test files created during development
+debug-*.js
+test-*.js
+*.debug.log
+
+# Temporary translation exports and working files
+translations/export/
+translations/temp/
+translations/working/
+
+# Generated reports
+reports/
+*.report.json
+*.report.html
+
+# Translation cache files
+.translation-cache/
+*.translation.cache
+
+# Log files from translation scripts
+logs/
+*.log
+translation-*.log
+
+# Build artifacts
+build/
+dist/
+
+# IDE and editor files
+*.sublime-project
+*.sublime-workspace
+.vscode/settings.json
+.vscode/launch.json
+.vscode/extensions.json
+
+# JetBrains IDEs
+.idea/
+
+# MacOS
+.AppleDouble
+.LSOverride
+Icon?
+
+# Windows
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+*~
+
+# ==============================================
+# RECOMMENDED: Keep these files in git
+# ==============================================
+# !package.json
+# !translations/en.json
+# !translations/*.json (translation files should be tracked)
+# !scripts/
+# !README-translation.md
+# !IMPLEMENTATION_SUMMARY.md
